@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Collection Minter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .mint-container {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #dff0d8;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>NFT Collection Minter</h1>
+    <p>Mint your NFT from our limited collection!</p>
+    
+    <div id="mint-container" class="mint-container">
+        <h2 id="collection-name">My Limited Collection</h2>
+        <p id="supply-info">Loading supply information...</p>
+        <p id="price-info">Price: 0.1 SOL</p>
+        
+        <button id="connect-wallet">Connect Wallet</button>
+        <button id="mint-nft" style="display: none;">Mint NFT</button>
+        
+        <p id="error-message" class="error" style="display: none;"></p>
+        <div id="success-message" class="success" style="display: none;">
+            <h3>Successfully minted!</h3>
+            <p id="nft-name"></p>
+            <p id="nft-address"></p>
+            <p id="nft-owner"></p>
+        </div>
+    </div>
+
+    <!-- Load Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <script>
+        // This is a simplified implementation
+        // In a real application, you would need to use proper bundling for Metaplex libraries
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Collection configuration
+            const COLLECTION_CONFIG = {
+                mint: "YOUR_COLLECTION_MINT_ADDRESS", // Replace with your collection mint
+                maxSupply: 100,
+                currentSupply: 20, // In a real app, you'd fetch this from an API or blockchain
+                price: 0.1,
+                name: "My Limited Collection",
+                symbol: "MLC"
+            };
+            
+            // Update UI with collection info
+            document.getElementById('collection-name').textContent = COLLECTION_CONFIG.name;
+            document.getElementById('supply-info').textContent = 
+                `Current Supply: ${COLLECTION_CONFIG.currentSupply} / ${COLLECTION_CONFIG.maxSupply}`;
+            
+            // Elements
+            const connectWalletBtn = document.getElementById('connect-wallet');
+            const mintNftBtn = document.getElementById('mint-nft');
+            const errorMsg = document.getElementById('error-message');
+            const successMsg = document.getElementById('success-message');
+            
+            // Connect wallet button
+            connectWalletBtn.addEventListener('click', async () => {
+                try {
+                    // Check if Phantom wallet is installed
+                    if (!window.solana || !window.solana.isPhantom) {
+                        throw new Error("Phantom wallet is not installed. Please install it from https://phantom.app/");
+                    }
+                    
+                    // Request connection to the wallet
+                    await window.solana.connect();
+                    
+                    // Update UI
+                    connectWalletBtn.style.display = 'none';
+                    mintNftBtn.style.display = 'block';
+                    
+                    // Display wallet address
+                    const walletAddress = window.solana.publicKey.toString();
+                    console.log("Connected wallet:", walletAddress);
+                    
+                } catch (error) {
+                    showError(error.message);
+                }
+            });
+            
+            // Mint NFT button
+            mintNftBtn.addEventListener('click', async () => {
+                try {
+                    // Check if we've reached max supply
+                    if (COLLECTION_CONFIG.currentSupply >= COLLECTION_CONFIG.maxSupply) {
+                        throw new Error("Collection is sold out!");
+                    }
+                    
+                    // In a real application, you would:
+                    // 1. Generate a new mint address
+                    // 2. Create the NFT using Metaplex
+                    // 3. Associate it with your collection
+                    // 4. Process payment
+                    // 5. Transfer the NFT to the user
+                    
+                    // For this demo, we'll simulate the minting process
+                    mintNftBtn.disabled = true;
+                    mintNftBtn.textContent = "Minting...";
+                    
+                    // Simulate transaction delay
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Update supply count
+                    COLLECTION_CONFIG.currentSupply += 1;
+                    document.getElementById('supply-info').textContent = 
+                        `Current Supply: ${COLLECTION_CONFIG.currentSupply} / ${COLLECTION_CONFIG.maxSupply}`;
+                    
+                    // Show success message
+                    const tokenNumber = COLLECTION_CONFIG.currentSupply;
+                    const mintAddress = "NFT12345" + Math.floor(Math.random() * 1000000);
+                    const ownerAddress = window.solana.publicKey.toString();
+                    
+                    document.getElementById('nft-name').textContent = `NFT: ${COLLECTION_CONFIG.name} #${tokenNumber}`;
+                    document.getElementById('nft-address').textContent = `Mint Address: ${mintAddress}`;
+                    document.getElementById('nft-owner').textContent = `Owner: ${ownerAddress}`;
+                    
+                    successMsg.style.display = 'block';
+                    mintNftBtn.textContent = "Mint NFT";
+                    mintNftBtn.disabled = false;
+                    
+                } catch (error) {
+                    mintNftBtn.textContent = "Mint NFT";
+                    mintNftBtn.disabled = false;
+                    showError(error.message);
+                }
+            });
+            
+            // Helper function to show errors
+            function showError(message) {
+                errorMsg.textContent = message;
+                errorMsg.style.display = 'block';
+                setTimeout(() => {
+                    errorMsg.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+    
+    <p style="margin-top: 30px; font-size: 14px; color: #666;">
+        Note: This is a simplified demo. A real implementation would require proper integration with Solana and Metaplex libraries.
+        In production, you would need to use a bundler like webpack or vite to include all required libraries.
+    </p>
+</body>
+</html> 
