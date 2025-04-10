@@ -34,11 +34,11 @@ umi.use(signerIdentity(signer))
 const mint = generateSigner(umi)
 console.log('NFT Mint Address:', mint.publicKey)
 
-async function uploadImage(imageLocation, name, description, attributes) {
+async function uploadImage() {
   try {
     // Upload the image
     console.log('Reading image file...')
-    const imageFile = fs.readFileSync(imageLocation)
+    const imageFile = fs.readFileSync('./chica.jpeg')
     console.log('Image file size:', imageFile.length, 'bytes')
     
     const umiImageFile = createGenericFile(imageFile, 'chica.jpeg', {
@@ -52,10 +52,14 @@ async function uploadImage(imageLocation, name, description, attributes) {
     // Upload the metadata
     console.log('Starting metadata upload...')
     const uri = await umi.uploader.uploadJson({
-      name: name,
-      description: description,
+      name: 'Sleepy Chica',
+      description: 'Chica is the cutest poodle in the world',
       image: imageUri,
-      attributes: attributes
+      attributes: [
+        { trait_type: 'Type', value: 'Poodle' },
+        { trait_type: 'Color', value: 'Brown' },
+        { trait_type: 'State', value: 'Sleeping' }
+      ]
     })
     console.log('Metadata upload completed. URI:', uri)
    
@@ -70,27 +74,5 @@ async function uploadImage(imageLocation, name, description, attributes) {
 
 // Execute the async function using an IIFE to handle top-level await
 (async () => {
-  await uploadImage('./chica.jpeg', 'Chica', 'Chica is the cutest dog', [
-    { trait_type: 'Type', value: 'Poodle' },
-    { trait_type: 'Color', value: 'Brown' },
-    { trait_type: 'State', value: 'Sleeping' }
-  ])
-  await uploadImage('./chica-3day-s.jpeg', 'Chica', 'Chica says: Good streak, keep it up! Tail wags of approval!', [
-    { trait_type: 'Type', value: 'Poodle' },
-    { trait_type: 'Color', value: 'Brown' },
-    { trait_type: 'State', value: 'Cheering' },
-    { trait_type: 'Streak', value: '3 days' }
-  ])
-  await uploadImage('./chica-7day-s.jpeg', 'Chica', 'Chica says: One week strong! Let’s sniff out greatness!', [
-    { trait_type: 'Type', value: 'Poodle' },
-    { trait_type: 'Color', value: 'Brown' },
-    { trait_type: 'State', value: 'Cheering' },
-    { trait_type: 'Streak', value: '7 days' }
-  ])
-  await uploadImage('./chica-30day-s.jpeg', 'Chica', 'Chica says: 30 days?! You’re pawsitively unstoppable!', [
-    { trait_type: 'Type', value: 'Poodle' },
-    { trait_type: 'Color', value: 'Brown' },
-    { trait_type: 'State', value: 'Cheering' },
-    { trait_type: 'Streak', value: '30 days' }
-  ])
+  await uploadImage()
 })();

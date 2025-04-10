@@ -1,6 +1,7 @@
 import {
     createV1,
     mintV1,
+    printV1,
     TokenStandard,
     mplTokenMetadata
 } from "@metaplex-foundation/mpl-token-metadata";
@@ -53,8 +54,7 @@ async function mintNftFromCollection(recipientAddress) {
         // Recreate collection mint signer from saved data
         const collectionMintSecretKey = new Uint8Array(collectionData.mintSecretKey);
         const collectionMintPubkey = publicKey(collectionData.mint);
-        
-        // Generate a new mint for this NFT
+        console.log("collectionMintPubkey: ", collectionMintPubkey)        // Generate a new mint for this NFT
         const nftMint = generateSigner(umi);
         console.log('New NFT Mint Address:', nftMint.publicKey.toString());
         console.log('New NFT Mint Secret Key:', Array.from(nftMint.secretKey));
@@ -78,12 +78,14 @@ async function mintNftFromCollection(recipientAddress) {
             name: nftMetadata.name,
             symbol: nftMetadata.symbol,
             uri: nftMetadata.uri,
+            isMutable: true,
+            maxSupply: 100,
             sellerFeeBasisPoints: percentAmount(5.5), // 5.5% royalty
             tokenStandard: TokenStandard.NonFungible,
             collection: {
                 key: collectionMintPubkey,
                 verified: false,
-            },
+            }
         }).sendAndConfirm(umi);
         
         const createTxSig = base58.deserialize(createTx.signature);
@@ -122,6 +124,41 @@ async function mintNftFromCollection(recipientAddress) {
     }
 }
 
+async function mintNftFromCollectionAndMintAdditionalTokens(recipientAddress, mintAddress, mintAmount) {
+    try {
+        const mintPubkey = publicKey(mintAddress);
+        const recipient = recipientAddress ? publicKey(recipientAddress) : umi.identity.publicKey;
+        console.log(`Minting NFT to recipient: ${recipient.toString()}`);
+        
+        const mintTx = await mintV1(umi, {
+            mint: mintPubkey,
+            authority: umi.identity,
+            payer: umi.identity,
+            amount: mintAmount, // NFTs have amount 1
+            tokenOwner: recipient,
+            tokenStandard: TokenStandard.NonFungible,
+        }).sendAndConfirm(umi);
+        
+        const mintTxSig = base58.deserialize(mintTx.signature);
+        console.log(`NFT Minted: https://explorer.solana.com/tx/${mintTxSig}?cluster=devnet`);
+        
+        // Update the collection supply counter
+        collectionData.currentSupply += 1;
+        fs.writeFileSync('./collection-data.json', JSON.stringify(collectionData, null, 2));
+        
+        console.log('NFT minted successfully!');
+        console.log(`New supply count: ${collectionData.currentSupply}/${collectionData.maxSupply}`);
+        
+        return {
+            mint: nftMint.publicKey.toString(),
+            owner: recipient.toString(),
+            mintTx: mintTxSig
+        };
+    } catch (error) {
+        console.error('Error minting NFT:', error);
+    }
+}
+
 // Example usage: 
 // To mint to yourself (the creator): 
 // mintNftFromCollection();
@@ -132,6 +169,10 @@ async function mintNftFromCollection(recipientAddress) {
 // Parse command line arguments to get recipient address
 const args = process.argv.slice(2);
 const recipientAddress = args[0]; // Optional recipient address
+const mintAddress = args[1];
+const mintAmount = args[2];
 
 // Run the minting function
 mintNftFromCollection(recipientAddress); 
+
+// mintNftEdition(recipientAddress, mintAddress);

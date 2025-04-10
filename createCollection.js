@@ -43,9 +43,9 @@ const collectionData = {
 
 // Collection Metadata
 const collectionMetadata = {
-    name: "Sleepy Chica",
+    name: "Chica Collection",
 	symbol: "Chica!!",
-	uri: "https://gateway.irys.xyz/CZkXnFospC5jakQf3k69uaQcx1M3YTv6A8MJ1Lbx2TVw", // Replace with your actual metadata URI
+	uri: "https://gateway.irys.xyz/EhhpF7wz4tFX6tN8dtSk2mSWuV12axRewrV1uU13HsQm", // Replace with your actual metadata URI
 };
 
 // Create the collection NFT
@@ -65,6 +65,10 @@ async function createCollectionNft() {
             sellerFeeBasisPoints: percentAmount(5.5), // 5.5% royalty
             isCollection: true,
             tokenStandard: TokenStandard.NonFungible,
+            collection: {
+                key: collectionMint.publicKey,
+                verified: false
+            }
         }).sendAndConfirm(umi);
         
         console.log('Collection NFT created successfully!');
