@@ -36,7 +36,7 @@ const keypairData = JSON.parse(fs.readFileSync('./keypair.json', 'utf8'));
 // const privateKeyArray = bs58.decode(base64Key);
 
 const keypair = umi.eddsa.createKeypairFromSecretKey(Buffer.from(keypairData, 'hex'));
-const collectionMintPubkey = publicKey('Arb5kbY5MkABYyfX7RRLVA18SxVeoahJSp3v8XZKFLkH')
+const collectionMintPubkey = publicKey('Es9LBrgfWdXh5SKdYoLjRmY65njWaRqNLvfan1mpUSQb')
 
 
 console.log('Creator address:', keypair.publicKey.toString());
@@ -70,9 +70,9 @@ async function createMasterEdition(nftName, nftSymbol, nftUri) {
   console.log(JSON.stringify(masterNft, null, 2));
 }
 
-createMasterEdition('Chica 3 day streak', 'Chica', 'https://gateway.irys.xyz/C5sLAP6suhqkGGV59WJbVLTSf32Rhbf331UcLdUd97mL')
-createMasterEdition('Chica 7 day streak', 'Chica', 'https://gateway.irys.xyz/AJM48DevatQQbkJcQeE5RPUswPLK4quWP4ryzFqjX59F')
-createMasterEdition('Chica 30 day streak', 'Chica', 'https://gateway.irys.xyz/An7RGxcztUqUW4n3p5Qg2p7ECyyoavE68f8VrYGhF1TM')
+createMasterEdition('Chica 3 day streak', 'Chica', 'https://gateway.irys.xyz/7hnsAu5i2Y2jWsAFGvSPsEamrt4t8NQ2hXJe6qTzYyZF')
+createMasterEdition('Chica 7 day streak', 'Chica', 'https://gateway.irys.xyz/6E7CAtbffWVvHDFKV5m12iMpv4UdLaBnFsVF1EoxCgP6')
+createMasterEdition('Chica 30 day streak', 'Chica', 'https://gateway.irys.xyz/5msEk4vBJbtMsfDWxBR1sJrmjS9UbWdkctnqB52aq2UR')
 
 // const mint = publicKey('DG616NbNfVYH5Jsq5uFTcXCGZ8Fui7yMtBWfcwAYAmBS')
 // const tokenOwner = publicKey('2AFVmTvpVQfjjBBRcvCsrbFjykhxLBwNXaeQsVeZcq4S')

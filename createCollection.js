@@ -43,9 +43,9 @@ const collectionData = {
 
 // Collection Metadata
 const collectionMetadata = {
-    name: "Chica Collection",
+    name: "Chica Streaks Collection",
 	symbol: "Chica!!",
-	uri: "https://gateway.irys.xyz/EhhpF7wz4tFX6tN8dtSk2mSWuV12axRewrV1uU13HsQm", // Replace with your actual metadata URI
+	uri: "https://gateway.irys.xyz/3NiaUFKZJYuuTMiPphsisaqjVt8hrnzT1x9E71HsFigg", // Replace with your actual metadata URI
 };
 
 // Create the collection NFT
